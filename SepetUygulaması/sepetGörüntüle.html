@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" ></script>
+      <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+      <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+      <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css" />
+      <link rel="stylesheet" type="text/css" href="sepetGörüntüle.css" />
+      <title>Kullanıcı Sepeti</title>
+    </head>
+    <body >
+          <div id="ana_div">
+            <div class="divv" >
+              <form >
+                <div id="kullanici"></div>
+              </form>
+            </div>
+          </div>
+          <div id="formAc">
+            <div class="div1"><label>Ödeyeceğiniz Ücret</label> <input type="text" id="ucretYaz" DISABLED></div>
+            <div><button class="btn" id="odemeYap">ÖDEME YAP</button></div>
+          </div>
+          <div id="odemeForm">
+              <div id="tblDialog" title="Ödeme İşlemleri">
+                <form action="" method="post" onsubmit="return isValid(this)" >
+                    <table class="table">
+                          <tr>
+                            <td>AD</td>
+                            <td><input id="personAd" name="personAd" type="text"  placeholder="Adınız"></td>
+                          </tr>
+                          <tr>
+                            <td>SOYAD</td>
+                            <td><input type="text" id="personSoyad" name="personSoyad" placeholder="Soyadınız" style="text-transform: capitalize;"></td>
+                          </tr>
+                          <tr>
+                            <td>Email</td>
+                            <td><input type="mail" name="email" id="personEmail" placeholder="mail adresi"></td>
+                          </tr>
+                          <tr>
+                            <td>TELEFON</td>
+                            <td><input type="number" name="tel" id="personTel" placeholder="telefon numarası"></td>
+                          </tr>
+                          <tr>
+                            <td>ADRES</td>
+                            <td><input type="text" name="personAdderes" id="personAdderes" placeholder="Adres bilgisi"></td>
+                          </tr>
+                          <tr>
+                            <td>KART NUMARASI</td>
+                            <td><input type="number" id="personKart" name="kart">
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Ödenecek Tutar</td>
+                            <td><div class="div1"><input type="text" id="ucretYaz2" DISABLED></div></td>
+                          </tr>
+                    </table>
+                    <button type="button" id="urunOdeme" class="btn"  >ÖDE</button> 
+                </form>
+              </div>
+          </div>
+          <div id="urun_data">   
+          </div>
+    </body> 
+    <script >
+        $(document).ready(function(){
+            $("#odemeForm").hide();
+            var sepetId;
+            var odenecekToplamUcret=0;
+            var ucret='';
+            var adet=0;
+            var urunListele='';
+            var userId=0;
+            if (window.openDatabase) {
+                  // VERİTABANINI OLUŞTUR
+                  var veritabani = openDatabase('sepetUygulaması', '1.0', 'Web SQL Veritabanı', 10*1024*1024);  
+                  console.log("local_veritabani isimli veritabanı 1.0 versiyonu ile 10MB olacak şekilde oluşturuldu veya zaten varsa yeniden oluşturulmadı!");
+                  getUrlValue();
+            }else{
+                alert("Maalesef tarayıcınızda Web SQL desteği bulunmamaktadır.")
+            }
+            function getUrlValue(){
+                var SearchString = window.location.search.substring(1);
+                userId = SearchString.split('?');
+                kullaniciyiGetir(userId);
+            }
+            function kullaniciyiGetir(userId){
+                veritabani.transaction(function(tx) {
+                    tx.executeSql('SELECT * FROM persons', [], function(islem, sonuc) {
+                        console.log("Kayıtlar listeleniyor:")
+                        console.log(sonuc.rows);
+                        jQuery.each(sonuc.rows, function(index, value) {
+                            console.log(value.id);
+                            if(value.id==userId){
+                                user_Id=value.id;
+                                var kullaniBilgisi='';
+                                kullaniBilgisi+='<label> <h2>Kullanıcı Bilgileri</h2></label>';
+                                kullaniBilgisi+='<div class="div2"> <span><label>Ürün Kullanıcı Adı:</label>'+value.name+'</span> </div>';
+                                kullaniBilgisi+='<div class="div2"> <span><label>Kullanıcı Soyadı:</label>'+value.surName+'</span> </div>';
+                                kullaniBilgisi+='<div class="div2"> <span><label>Kullanıcı User Name:</label>'+value.userName+' </span> </div>';
+                                kullaniBilgisi+='<div class ="input-group">';
+                                kullaniBilgisi+='<button type="button" data-index="'+value.id+'" id="geri" class="btn">Ana Sayfaya Dön </button> ';
+                                kullaniBilgisi+='</div>';
+                                $("#kullanici").append(kullaniBilgisi);
+                            }
+                        });
+                    });
+                });
+                sepeteEklenen();
+            }
+            $(document).on('click', '#geri', function(){
+              window.location.href="homePage.html?"+user_Id; 
+            });
+            function sepeteEklenen(){
+              veritabani.transaction(function(tx) {
+                tx.executeSql('SELECT * FROM sepetAdd WHERE userNameId=?', [userId], function(islem, sonuc) {
+                  console.log(sonuc.rows);
+                  jQuery.each(sonuc.rows, function(index, value) {
+                      //value.id  value.urunId    value.userNameId  value.sepetAddUrunAdet
+                      console.log(value.id);
+                      tx.executeSql('SELECT * FROM urun ', [], function(islem, sonuc){
+                        adet=0;
+                        jQuery.each(sonuc.rows, function(urunindex, urunValue){
+                            if(value.urunId==urunValue.id){
+                                adet++;
+                                while (adet<=1){
+                                    adet++;
+                                    urunListele='';
+                                    urunListele+='<form class="form1">';
+                                    urunListele+='<div class="div1"> <img src="'+urunValue.urunImg+'"/> </div>';
+                                    urunListele+='<div class="div1"> <span><label>Ürün Adı:</label>'+urunValue.urunName+'</span> </div>';
+                                    urunListele+='<div class="div1"> <span><label>Ürün Model:</label>'+urunValue.urunModel+' </span> </div>';
+                                    urunListele+='<div class="div1"> <span><label>Fiyat:</label>'+urunValue.urunFiyat+' </span> </div>';
+                                    urunListele+='<div class="input-group">';
+                                    urunListele+='<button type="button" data-index="'+value.id+'" id="urunDelete"'+urunValue.id+' class="btnDelete"  >SİL</button>'; 
+                                    urunListele+='<br>';
+                                    urunListele+='<input type=button data-index="'+value.id+'" id="azalt"  value="-">';
+                                    urunListele+='<input type=button id="urunAdedi'+value.id+'" value="'+value.sepetAddUrunAdet+'">';
+                                    urunListele+='<input type=button data-index="'+value.id+'" id="arttir" value="+">';
+
+                                    urunListele+='</div>';
+                                    urunListele+='</form>';
+                                    $("#urun_data").append(urunListele);
+                                    console.log("Adet:"+adet);
+                                    odenecekToplamUcret+=urunValue.urunFiyat*value.sepetAddUrunAdet;
+                                    console.log("Ucret::"+odenecekToplamUcret);
+                                    $("#ucretYaz").val(odenecekToplamUcret);
+                                    $("#ucretYaz2").val(odenecekToplamUcret);          
+                                }
+                            }
+                        });
+                      });
+                  });
+                });
+              });
+            }
+            $(document).on('click','#islemler', function(){
+                veritabani.transaction(function(tx) {
+                    tx.executeSql('SELECT * FROM sepetAdd WHERE userNameId=?', [userId], function(islem, sonuc) {
+                      console.log(sonuc.rows);
+                      jQuery.each(sonuc.rows, function(index, value) {
+                        //value.id  value.urunId    value.userNameId  value.sepetAddUrunAdet
+                      });
+                    });
+                });
+            }) ;
+            $(document).on('click', '#odemeYap', function(){
+                $("#odemeForm").show();
+                $("#ana_div").hide();
+                $("#formAc").hide();
+                $("#urun_data").hide();
+                $("#tblDialog").dialog({
+                    dialogClass: "no-close",
+                    resizable: false,
+                    width: "540px",
+                    modal: true,
+                    buttons: [{
+                      text: "ÇIK",
+                      click: function fomdanCık() {
+                        /*On click of close button closing dialog*/
+                        $(this).dialog("close");
+                        $("#ana_div").show();
+                        $("#formAc").show();
+                        $("#urun_data").show();
+                      }
+                    }],
+                    autoOpen: true
+                });
+                if($("#ucretYaz2").val()==""){
+                  alert("Sepetiniz boş,lütfen ürün secip sonra ödeme kısmına geçin.");
+                  window.location.href="homePage.html?"+user_Id; 
+                }  
+            }) ;
+            $(document).on('click', '#urunDelete', function(){
+                //window.location.href="homePage.html?"+value.id;
+                urunDelete_Id = $(this).attr('data-index');
+                console.log("URUN::"+urunDelete_Id);
+                veritabani.transaction(function(tx) {
+                      tx.executeSql('DELETE FROM sepetAdd WHERE id = ?', [urunDelete_Id], function(islem, sonuc){
+                        console.log(sonuc);
+                        console.log('Kayıt silindi.');
+                      }, function(islem, hata) {
+                        console.log("Hata: ", hata);
+                      });
+                      location.reload();
+                });
+            }) ;
+             //*****************
+             //*****ARTTİRMA*****
+             //*******************
+            $(document).on('click', '#arttir', function(){
+               //window.location.href="homePage.html?"+value.id;
+               sepetId = $(this).attr('data-index');
+               veritabani.transaction(function(tx) {
+                 tx.executeSql('SELECT * FROM sepetAdd WHERE id=?',[sepetId],function(islemSepet,sonucSepet){
+                    jQuery.each(sonucSepet.rows,function(indexSepet,valueSepet){
+                        var artanAdet=valueSepet.sepetAddUrunAdet+1;
+                        tx.executeSql('UPDATE sepetAdd SET sepetAddUrunAdet=? WHERE id=? ',[ artanAdet,sepetId],function(islemUpdate,sonucUpdate){
+                          console.log(sonucUpdate);
+                          var id2="#urunAdedi"+valueSepet.id;
+                          $(id2).val(artanAdet);
+                          console.log("Urun adeti güncellendi...");
+                        },function(islem, hata){
+                            console.log("Hata: ", hata);
+                        });     
+                    });
+                 });
+               });
+            }) ;
+             //*****************
+             //*****AZALTMA*****
+             //*******************
+            $(document).on('click', '#azalt', function(){
+                //window.location.href="homePage.html?"+value.id;
+                sepetId = $(this).attr('data-index');
+                veritabani.transaction(function(tx) {
+                  tx.executeSql('SELECT * FROM sepetAdd WHERE id=?',[sepetId],function(islemSepet,sonucSepet){
+                      jQuery.each(sonucSepet.rows,function(indexSepet,valueSepet){
+                          var eksilenAdet=valueSepet.sepetAddUrunAdet-1;
+                          tx.executeSql('UPDATE sepetAdd SET sepetAddUrunAdet=? WHERE id=? ',[ eksilenAdet,sepetId],function(islemUpdate,sonucUpdate){
+                            console.log(sonucUpdate);      
+                            console.log("Urun adeti güncellendi...");
+                            var id="#urunAdedi"+valueSepet.id;
+                            $(id).val(eksilenAdet);
+
+                          }, function(islem, hata) {
+                            console.log("Hata: ", hata);
+                          });     
+                      });
+                  });
+                });
+            });
+            $("#urunOdeme").click(function() {
+                var personAd = $("#personAd").val();
+                var personSoyad = $("#personSoyad").val();
+                var personEmail = $("#personEmail").val();
+                var personTel = $("#personTel").val()
+                var personAdderes = $("#personAdderes").val()
+                var personKart = $("#personKart").val()
+                if (personAd == ''||personSoyad == ''|| personEmail == '' || personTel == '' || personAdderes == '' || personKart== '' ){
+                  alert("Boş alan bırakmayınız...!!!!");
+                }else if((personKart.length)!=16 ){
+                          alert("Kart numarası 16 rakamdan oluşmalı...!!");
+                }else if(!MailKontrol(personEmail)){
+                          alert("Geçersiz veya Hatalı Email");
+                }else if(!personAdKontrol(personAd)){
+                        alert("Adınız harflerden oluşmalı.");
+                }else if(!personSoyadKontrol(personSoyad)){
+                          alert("Soyadınız harflerden oluşmalı.");
+                }else{
+                    alert("ÖDEME İŞLEMİNİZ BAŞARILI BİR ŞEKİLDE GERCEKLEŞTİRİLDİ...");
+                    $("#personAd").val("");
+                    $("#personSoyad").val("");
+                    $("#personEmail").val("");
+                    $("#personTel").val("")
+                    $("#personAdderes").val("")
+                    $("#personKart").val("")
+                    veritabani.transaction(function(tx) {
+                      tx.executeSql('DELETE FROM sepetAdd WHERE userNameId=?', [userId],function(islem, sonuc){
+                        location.reload();
+                      });
+                    });
+                }
+            });
+            function MailKontrol(email){
+              var kontrol = new RegExp(/^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/i);
+              return kontrol.test(email);
+            }
+            function personAdKontrol(personAd){
+              var kontrol = new RegExp(/^[a-zA-Z]{3,35}$/i);
+              return kontrol.test(personAd);
+            }
+            function personSoyadKontrol(personSoyad){
+              var kontrol = new RegExp(/^[a-zA-Z]{3,35}$/i);
+              return kontrol.test(personSoyad);
+            }
+        });
+    </script>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+      <style>
+  body {
+    font-size: 19px;
+  }
+  form {
+    width: 100%;
+    margin: 50px auto;
+    text-align: left;
+    padding: 20px; 
+    border: 1px solid #bbbbbb; 
+    border-radius: 5px;
+  }
+  .form1 {
+    width: 100%;
+    height:70; 
+    margin: 50px auto;
+    text-align: left;
+    padding: 20px; 
+    border: 1px solid #bbbbbb; 
+    border-radius: 5px;
+  }
+  .div1 {
+    width: 20%;
+    border: 1px solid #bbbbbb; 
+    border-radius: 5px;
+  }
+  .input-group {
+    margin: 10px 0px 10px 0px;
+  }
+  .input-group label {
+    display: block;
+    text-align: left;
+    margin: 3px;
+  }
+  label {
+    display: block;
+    color: #3c763d; 
+    text-align: left;
+    margin: 3px;
+  }
+  .input-group input {
+    height: 30px;
+    width: 20%;
+    padding: 5px 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid gray;
+  }
+  .btn {
+    padding: 10px;
+    font-size: 15px;
+    color: white;
+    background: #13F159;
+    border: none;
+    border-radius: 5px;
+  }
+
+  .sill_btn {
+    text-decoration: none;
+    padding: 2px 5px;
+    color: red;
+    border-radius: 3px;
+    background: #880000;
+  }
+  .msg {
+    margin: 30px auto; 
+    padding: 10px; 
+    border-radius: 5px; 
+    color: #3c763d; 
+    background: #dff0d8; 
+    border: 1px solid #3c763d;
+    width: 50%;
+    text-align: center;
+  }
+</style>
+<script>
+
+function setCookie(cname,cvalue,exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires=" + d.toGMTString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+function checkCookie() {
+    var user=getCookie("username");
+    if (user != "") {
+        alert("Welcome again " + user);
+    } else {
+       user = prompt("Please enter your name:","");
+       if (user != "" && user != null) {
+           setCookie("username", user, 30);
+       }
+    }
+}
+</script>
+</head>
+  <body onload="checkCookie()">
+       <form class="form1">
+     <div><img src="casper.jpg"/> </div>
+     <div class="div1"  ><span><label>Ürün Adı:</label>Casper diz üstü bilgisayar</span></div>
+     <div class="div1" ><span><label>Ürün Model:</label>A12BC</span> </div>
+     <div class="div1" ><span><label>Adet:</label>10</span></div>
+     <div class = "input-group">
+       <button type="button" id="urunEkle1" class="btn">Sepete Ekle</button> 
+     </div>  
+   </form>
+
+
+   <form class="form1">
+     <div><img src="Iphone_6.jpg"/> </div>
+     <div class="div1"  ><span><label>Ürün Adı:</label>Iphone telefon</span></div>
+     <div class="div1" ><span><label>Ürün Model:</label>KKV23</span> </div>
+     <div class="div1" ><span><label>Adet:</label>5</span></div>
+     <div class = "input-group">
+       <button type="button" id="urunEkle1" class="btn">Sepete Ekle</button> 
+     </div>  
+   </form>
+
+
+   <form class="form1">
+     <div><img src="LG_g4.jpg"/> </div>
+     <div class="div1"  ><span><label>Ürün Adı:</label>LG cep trelefonu</span></div>
+     <div class="div1" ><span><label>Ürün Model:</label>12WXC</span> </div>
+     <div class="div1" ><span><label>Adet:</label>7</span></div>
+     <div class = "input-group">
+       <button type="button" id="urunEkle1" class="btn">Sepete Ekle</button> 
+     </div>  
+   </form>
+   <form class="form1">
+     <div><img src="Turkcell_t50.jpg"/> </div>
+     <div class="div1"  ><span><label>Ürün Adı:</label>Turkcell cep telefonu</span></div>
+     <div class="div1" ><span><label>Ürün Model:</label>ASD23</span> </div>
+     <div class="div1" ><span><label>Adet:</label>10</span></div>
+     <div class = "input-group">
+       <button type="button" id="urunEkle1" class="btn">Sepete Ekle</button> 
+     </div>  
+   </form>
+  </body>
+</html>

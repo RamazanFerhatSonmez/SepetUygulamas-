@@ -1,0 +1,155 @@
+ <style>
+  body {
+    font-size: 19px;
+  }
+  form {
+    width: 80%;
+    height:100%; 
+    margin: 50px auto;
+    text-align: left;
+    padding: 20px; 
+    border: 1px solid #bbbbbb; 
+    border-radius: 5px;
+  }
+  input[type="button"]{
+width: 3%;
+height: 5px;
+border:2px;
+color:#001f84;
+padding: 5px 10px;
+}
+  .Islemler{
+    width: 80%;
+    height:100%; 
+    margin: 50px auto;
+    text-align: left;
+    padding: 20px; 
+
+  }
+  .form1 {
+    width: 60%;
+    height:70%; 
+    margin: 50px auto;
+    
+    padding: 20px; 
+    border: 1px solid #bbbbbb; 
+    border-radius: 5px;
+  }
+  .div1 {
+    width: 30%;
+    border: 1px solid #bbbbbb; 
+    border-radius: 5px;
+  }
+  .sepetEkle{
+
+    text-align: right;
+
+  }
+  .div2 {
+    width: 35%;
+    border: 1px solid #bbbbbb; 
+    border-radius: 5px;
+  }
+  .input-group {
+    margin: 10px 0px 10px 0px;
+  }
+  .input-group label {
+    display: block;
+    text-align: left;
+    margin: 2px;
+  }
+  label {
+    display: block;
+    color: #3c763d; 
+    text-align: left;
+    margin: 2px;
+  }
+  .input-group input {
+    height: 45px;
+    width: 15%;
+    padding: 10px 10px;
+
+  }
+  .btnDelete{
+        padding: 10px;
+    font-size: 15px;
+    color: white;
+    background: red;
+    border: none;
+    border-radius: 5px;
+  }
+  .btn {
+    padding: 10px;
+    font-size: 15px;
+    color: white;
+    background: #13F159;
+    border: none;
+    border-radius: 5px;
+  }
+  .btnArttir{
+
+    border-radius: 0px 4px 4px 0px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 0px;
+
+  }
+  .btnAzalt{
+    border-radius: 4px 0px 0px 4px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius: 4px;
+  }
+  #ana_div {
+    height: 500px;
+    width: 95%;
+
+  }
+  .divv {  
+    float: left;
+    height: 250px;
+    width: 45%;
+  }
+  .modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+
+  /* Modal Content */
+  .modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+  }
+
+  /* The Close Button */
+  .close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  .close:hover,
+  .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  #tblDialog {
+    height:450px !important;
+  }
+</style>

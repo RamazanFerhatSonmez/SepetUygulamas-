@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  
+</html>  <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" ></script>
+      <link rel="stylesheet" type="text/css" href="urunDetayi.css" />
+      <title>Home Page</title>
+    </head>
+    <body >
+      <form class="form1">
+        <div id="ana_div">
+         <div class="divv" id="urun_data"> </div>
+         <div class="divv" id="imgg"></div>
+       </div>
+      </form>
+    </body> 
+    <script >
+        $(document).ready(function(){
+            var urunId;
+            var user_Id;
+            var urunListeImg='';
+            if (window.openDatabase) {
+                // VERİTABANINI OLUŞTUR
+                var veritabani = openDatabase('sepetUygulaması', '1.0', 'Web SQL Veritabanı', 10*1024*1024);  
+                console.log("local_veritabani isimli veritabanı 1.0 versiyonu ile 10MB olacak şekilde oluşturuldu veya zaten varsa yeniden oluşturulmadı!");
+                getUrlValue();
+                // KAYITLARI ÇEK VE LİSTELE
+               // kayitlariOku();
+            }else{
+               alert("Maalesef tarayıcınızda Web SQL desteği bulunmamaktadır.")
+            }
+            function getUrlValue(){
+              var SearchString = window.location.search.substring(1);
+              var gelenSayi= SearchString.split('?');
+              urunId=gelenSayi/10;
+              urunId=Math.floor(urunId);
+              user_Id=gelenSayi%10;
+              alert("urunID:"+urunId+" userID::"+user_Id)
+              urunGetir(urunId);
+            }
+            function urunGetir(urunId){
+              veritabani.transaction(function(tx) {
+                tx.executeSql('SELECT * FROM urun', [], function(islem, sonuc) {
+                  console.log("Urun Getiriliyor...")
+                  console.log(sonuc.rows);
+                  $("#urun_data").empty();
+                  jQuery.each(sonuc.rows, function(index, value) {
+                    console.log(value.id);
+                    var urunListe='';
+                    urunListeImg='';
+                    if(value.id==urunId){
+
+                      urunListeImg+='<div > <img src="'+value.urunImg+'"/> </div>';
+                      $("#imgg").append(urunListeImg);
+                      urunListe+='<div class="div1"> <span><label>Ürün Adı:</label>'+value.urunName+'</span> </div>';
+                      urunListe+='<div class="div1"> <span><label>Ürün Model:</label>'+value.urunModel+' </span> </div>';
+                      urunListe+='<div class="div1"> <span><label>Fiyat:</label>'+value.urunFiyat+' </span> </div>';
+                      urunListe+='<div class="div1"> <span><label>Stok Sayısı:</label>'+value.urunStok+' </span> </div>';
+                      urunListe+='<div class="div1"> <span><label>Renk:</label>'+value.urunRenk+' </span> </div>';
+                      urunListe+='<div class ="input-group">';
+                      urunListe+='<button type="button" data-index="'+value.id+'" id="geri" class="btn">Ana Sayfaya Dön </button> ';
+                      urunListe+='</div>';
+                      urunListe+='<div class ="input-group">';
+                      urunListe+='<button type="button" data-index="'+value.id+'" id="ekleSepet" class="btn">SEPETE EKLE </button> ';
+                      urunListe+='</div>';
+
+                      $("#urun_data").append(urunListe);
+                    }
+                  });
+                });
+              });
+            }
+            $(document).on('click', '#geri', function() {
+               window.location.href="homePage.html?"+user_Id; 
+            }) ;
+            $(document).on('click','#ekleSepet',function(){
+              var dataIndex = $(this).attr('data-index');
+              urunGuncelle(dataIndex);
+            });
+            function urunGuncelle(dataIndex){
+                // HANGİ ELEMENT TIKLANMIŞSA ONDAKİ data-index'E GÖRE INDEX OKUNUYOR
+                veritabani.transaction(function(tx) {
+                  /* OKUNAN index DEĞERİ İLE VERİTABANINDAKİ id DEĞERİ EŞİT OLAN KAYIT SİLİNİYOR */
+                  tx.executeSql('SELECT * FROM urun WHERE id = ?', [dataIndex], function(islem, sonuc) {
+                    console.log(sonuc);
+                    console.log(islem);
+                    console.log('Urun Secildi.');           
+                    tx.executeSql('SELECT * FROM sepetAdd WHERE urunId=? AND userNameId=?',[dataIndex,user_Id],function(islemSepet,sonucSepet){
+
+                     console.log("************");
+                     console.log("SONUC SEPET::");
+                     console.log(sonucSepet);
+                     console.log("LENGTH:"+sonucSepet.rows.length);
+                     if(sonucSepet.rows.length==0){
+                       urunEkle(dataIndex,user_Id); 
+                     }
+                     jQuery.each(sonucSepet.rows,function(indexSepet,valueSepet){
+                       valueSepet.sepetAddUrunAdet=valueSepet.sepetAddUrunAdet+1;
+                       tx.executeSql('UPDATE sepetAdd SET sepetAddUrunAdet=? WHERE urunId=? AND userNameId=?',[ valueSepet.sepetAddUrunAdet,dataIndex,user_Id],function(islemUpdate,sonucUpdate){
+                        console.log("SONUC UPDATE:: "+sonucUpdate);
+                        console.log(sonucUpdate);
+                        valueSepet.sepetAddUrunAdet=valueSepet.sepetAddUrunAdet;
+                        rowsAffected=sonucUpdate.rowsAffected;
+                        console.log("Urun adeti güncellendi...");
+                        eklemeKarari=false;
+                        return 0;
+                      }, function(islem, hata) {
+                        console.log("Hata: ", hata);
+                      });     
+                     });
+                   });
+                  }, function(islem, hata) {
+                    console.log("Hata: ", hata);
+                  });
+                });
+            }
+            function urunEkle(dataIndex,user_Id){
+                veritabani.transaction(function(tx) {
+                  urunAdet=1;
+                  tx.executeSql('INSERT INTO sepetAdd(urunId, userNameId ,sepetAddUrunAdet)VALUES (?,?,?)', [dataIndex, user_Id,urunAdet], function(islem, sonuc) {
+                    console.log(sonuc);
+                    console.log("Urun Eklendi...");          
+                  }, function(islem, hata) {
+                    console.log("Hata: ", hata);
+                  });
+                });   
+              }
+        });
+    </script>
