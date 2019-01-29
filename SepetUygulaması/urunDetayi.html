@@ -1,7 +1,5 @@
 <!DOCTYPE html>
 <html>
-  
-</html>  
     <head>
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
       <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" ></script>
@@ -16,7 +14,8 @@
        </div>
       </form>
     </body> 
-    <script >
+  </html>  
+    <script>
         $(document).ready(function(){
             var urunId;
             var user_Id;
@@ -102,30 +101,4 @@
                         console.log("SONUC UPDATE:: "+sonucUpdate);
                         console.log(sonucUpdate);
                         valueSepet.sepetAddUrunAdet=valueSepet.sepetAddUrunAdet;
-                        rowsAffected=sonucUpdate.rowsAffected;
-                        console.log("Urun adeti güncellendi...");
-                        eklemeKarari=false;
-                        return 0;
-                      }, function(islem, hata) {
-                        console.log("Hata: ", hata);
-                      });     
-                     });
-                   });
-                  }, function(islem, hata) {
-                    console.log("Hata: ", hata);
-                  });
-                });
-            }
-            function urunEkle(dataIndex,user_Id){
-                veritabani.transaction(function(tx) {
-                  urunAdet=1;
-                  tx.executeSql('INSERT INTO sepetAdd(urunId, userNameId ,sepetAddUrunAdet)VALUES (?,?,?)', [dataIndex, user_Id,urunAdet], function(islem, sonuc) {
-                    console.log(sonuc);
-                    console.log("Urun Eklendi...");          
-                  }, function(islem, hata) {
-                    console.log("Hata: ", hata);
-                  });
-                });   
-              }
-        });
-    </script>
+                        
