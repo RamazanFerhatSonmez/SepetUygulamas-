@@ -8,3 +8,5 @@
 => Genel olarak işlemler ana sayfada bulunan ürünleri sepetinize ekleyebilirsiniz,sepetinizi görüntüleyip eklediğiniz ürünleri 
     satın alabilirsiniz...
 => Kısa bir sepet uygulamasının da olabilecek her şey var.    
+
+=> Projeyi indirip localinizde hemen kura bilirsiniz :)
