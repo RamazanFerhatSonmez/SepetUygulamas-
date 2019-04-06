@@ -1,124 +1,129 @@
 <!DOCTYPE>
 <html>
-    <head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-      <title>Sign Up</title>
-      <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" ></script>
-      <link rel="stylesheet" type="text/css" href="SignUp.css" />
-    </head>
-    <body>
-      <form >
-          <div class = "input-group">
-           <label> <h2>Uye Ol</h2> </label>
-           <label>   </label>
-           <label>Adınız</label>
-           <input type="text" id="personName" placeholder="Adınızı giriniz...">
-         </div>   
-         <div class = "input-group">
-           <label>Soyadınız</label>
-           <input type="text"  id="personSurName" placeholder="Soyadınızı giriniz...">
-         </div>  
-         <div class = "input-group">
-           <label>Kullanıcı Adı</label>
-           <input type="text"  id="personUserName" placeholder="Kullanıcı adınızı giriniz...">
-         </div>
-         <div class = "input-group">
-           <label>Şifre</label>
-           <input type="password"  id="personPassword" placeholder="Şifrenizi giriniz...">
-         </div>
-         <div class = "input-group">
-          <button type="button" onclick="personInsert()" id="add_person" class="btn">Hesabı Oluştur</button> 
-          <button type="button"  onclick="location.href='Login.html' "id="add_personn" class="btn">Login</button> 
-        </div>  
-      </form> 
-    </body>
-    <script>
-        //************VERİTABANI-ISLEMLERİ**********
-        if (window.openDatabase) {
-            // VERİTABANINI OLUŞTUR
-            var veritabani = openDatabase('sepetUygulaması', '1.0', 'Web SQL Veritabanı', 10*1024*1024);  
-            console.log("local_veritabani isimli veritabanı 1.0 versiyonu ile 10MB olacak şekilde oluşturuldu veya zaten varsa yeniden oluşturulmadı!");
-            // KAYITLARI ÇEK VE LİSTELE
-           // kayitlariOku();
-         }else{
-           alert("Maalesef tarayıcınızda Web SQL desteği bulunmamaktadır.")
-         }
-        veritabani.transaction(function(tx) {
-            tx.executeSql('CREATE TABLE persons(id INTEGER PRIMARY KEY, name VARCHAR(35), surName VARCHAR(25),userName VARCHAR(10),userPassword VARCHAR(6))', [], function(islem, sonuc) {
-                console.log(sonuc);
-                console.log('Persons tablosu oluşturuldu.');
-                tx.executeSql('CREATE TABLE urun(id INTEGER PRIMARY KEY, urunName VARCHAR(15), urunModel VARCHAR(5),urunFiyat INT(16), urunImg VARCHAR(15),urunStok INT(3),urunRenk VARCHAR(10))', [], function(islem, sonuc) {
-                    console.log(sonuc);
-                    console.log('Ürün tablosu oluşturuldu.');
-                    urunAdd();
-                    console.log("Urunler eklendi");
-                });
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Sign Up</title>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="SignUp.css" />
+</head>
+
+<body>
+  <form>
+    <div class="input-group">
+      <label>
+        <h2>Uye Ol</h2>
+      </label>
+      <label> </label>
+      <label>Adınız</label>
+      <input type="text" id="personName" placeholder="Adınızı giriniz...">
+    </div>
+    <div class="input-group">
+      <label>Soyadınız</label>
+      <input type="text" id="personSurName" placeholder="Soyadınızı giriniz...">
+    </div>
+    <div class="input-group">
+      <label>Kullanıcı Adı</label>
+      <input type="text" id="personUserName" placeholder="Kullanıcı adınızı giriniz...">
+    </div>
+    <div class="input-group">
+      <label>Şifre</label>
+      <input type="password" id="personPassword" placeholder="Şifrenizi giriniz...">
+    </div>
+    <div class="input-group">
+      <button type="button" onclick="personInsert()" id="add_person" class="btn">Hesabı Oluştur</button>
+      <button type="button" onclick="location.href='Login.html' " id="add_personn" class="btn">Login</button>
+    </div>
+  </form>
+</body>
+<script>
+  //************VERİTABANI-ISLEMLERİ**********
+  if (window.openDatabase) {
+    // VERİTABANINI OLUŞTUR
+    var veritabani = openDatabase('sepetUygulaması', '1.0', 'Web SQL Veritabanı', 10 * 1024 * 1024);
+    console.log("local_veritabani isimli veritabanı 1.0 versiyonu ile 10MB olacak şekilde oluşturuldu veya zaten varsa yeniden oluşturulmadı!");
+    // KAYITLARI ÇEK VE LİSTELE
+    // kayitlariOku();
+  } else {
+    alert("Maalesef tarayıcınızda Web SQL desteği bulunmamaktadır.")
+  }
+  veritabani.transaction(function (tx) {
+    tx.executeSql('CREATE TABLE persons(id INTEGER PRIMARY KEY, name VARCHAR(35), surName VARCHAR(25),userName VARCHAR(10),userPassword VARCHAR(6))', [], function (islem, sonuc) {
+      console.log(sonuc);
+      console.log('Persons tablosu oluşturuldu.');
+      tx.executeSql('CREATE TABLE urun(id INTEGER PRIMARY KEY, urunName VARCHAR(15), urunModel VARCHAR(5),urunFiyat INT(16), urunImg VARCHAR(15),urunStok INT(3),urunRenk VARCHAR(10))', [], function (islem, sonuc) {
+        console.log(sonuc);
+        console.log('Ürün tablosu oluşturuldu.');
+        urunAdd();
+        console.log("Urunler eklendi");
+      });
+    });
+  });
+  function urunAdd() {
+    veritabani.transaction(function (tx) {
+      tx.executeSql('INSERT INTO urun(urunName,urunModel,urunFiyat,urunImg,urunStok,urunRenk) VALUES ("Casper diz üstü bilgisayar","A12BC","2750","casper.jpg","100","Gri")');
+      tx.executeSql('INSERT INTO urun(urunName,urunModel,urunFiyat,urunImg,urunStok,urunRenk) VALUES ("Iphone telefon","KKV23","2000","Iphone_6.jpg","40","Beyaz")');
+      tx.executeSql('INSERT INTO urun(urunName,urunModel,urunFiyat,urunImg,urunStok,urunRenk) VALUES ("LG cep trelefonu","12WXC","1500 ","LG_g4.jpg","20","Kırmızı")');
+      tx.executeSql('INSERT INTO urun(urunName,urunModel,urunfiyat,urunImg,urunStok,urunRenk) VALUES ("Turkcell cep telefonu","ASD23","1300 ","Turkcell_t50.jpg","10","Beyaz")');
+      console.log("**************");
+    });
+  }
+  function personInsert() {
+    //*************************************************
+    var bilgi = false;
+    //?***********VeriTabanına kaydetme***************************
+    veritabani.transaction(function (tx) {
+      var _personName = document.getElementById("personName").value;
+      var _personSurName = document.getElementById("personSurName").value;
+      var _personUserName = document.getElementById("personUserName").value;
+      var _personPassword = document.getElementById("personPassword").value;
+      // EĞER İKİ DEĞER DE GİRİLMİŞSE...
+      if (_personName && _personSurName && _personUserName && _personPassword) {
+        tx.executeSql('SELECT * FROM persons', [], function (islem, sonuc) {
+          console.log(sonuc.rows);
+          var len = sonuc.rows.length;
+          console.log("rows:" + len);
+          if (len == 0) {
+            tx.executeSql('INSERT INTO persons (name,surName,userName,userPassword) VALUES (?,?,?,?)', [_personName, _personSurName, _personUserName, _personPassword], function (islem, sonuc) {
+              console.log(sonuc);
+              document.getElementById("personName").value = "";
+              document.getElementById("personSurName").value = "";
+              document.getElementById("personUserName").value = "";
+              document.getElementById("personPassword").value = "";
+              console.log("isim kaydedildi...");
+              // KAYITLAR TEKRAR OKUNARAK TABLOYA AKTARILIYOR
+            }, function (islem, hata) {
+              console.log("Hata: ", hata);
             });
+          }
+          jQuery.each(sonuc.rows, function (index, value) {
+            if (personUserName == value.userName) {
+              bilgi = true;
+              return 0;
+            }
+          });
+          if (bilgi && len > 1) {
+            alert("Girilen kullanıcı ismi kullanılmakta!");
+            window.location.reload();
+            return 0;
+          } else if (len >= 1) {
+            tx.executeSql('INSERT INTO persons (name,surName,userName,userPassword) VALUES (?,?,?,?)', [_personName, _personSurName, _personUserName, _personPassword], function (islem, sonuc) {
+              console.log(sonuc);
+              // INPUT'LAR SIFIRLANIYOR
+              document.getElementById("personName").value = "";
+              document.getElementById("personSurName").value = "";
+              document.getElementById("personUserName").value = "";
+              document.getElementById("personPassword").value = "";
+              console.log("isim kaydedildi... else");
+              return 0;
+            }, function (islem, hata) {
+              console.log("Hata: ", hata);
+            });
+          }
         });
-        function urunAdd(){
-            veritabani.transaction(function(tx) {
-                tx.executeSql('INSERT INTO urun(urunName,urunModel,urunFiyat,urunImg,urunStok,urunRenk) VALUES ("Casper diz üstü bilgisayar","A12BC","2750","casper.jpg","100","Gri")');
-                tx.executeSql('INSERT INTO urun(urunName,urunModel,urunFiyat,urunImg,urunStok,urunRenk) VALUES ("Iphone telefon","KKV23","2000","Iphone_6.jpg","40","Beyaz")');
-                tx.executeSql('INSERT INTO urun(urunName,urunModel,urunFiyat,urunImg,urunStok,urunRenk) VALUES ("LG cep trelefonu","12WXC","1500 ","LG_g4.jpg","20","Kırmızı")');
-                tx.executeSql('INSERT INTO urun(urunName,urunModel,urunfiyat,urunImg,urunStok,urunRenk) VALUES ("Turkcell cep telefonu","ASD23","1300 ","Turkcell_t50.jpg","10","Beyaz")');
-                console.log("**************");
-            });
-        }
-        function personInsert(){
-            //*************************************************
-            var bilgi=false;
-            //?***********VeriTabanına kaydetme***************************
-            veritabani.transaction(function(tx) {
-                    var _personName = document.getElementById("personName").value;
-                    var _personSurName = document.getElementById("personSurName").value;
-                    var _personUserName = document.getElementById("personUserName").value;
-                    var _personPassword = document.getElementById("personPassword").value;
-                                              // EĞER İKİ DEĞER DE GİRİLMİŞSE...
-                    if( _personName && _personSurName && _personUserName && _personPassword){
-                        tx.executeSql('SELECT * FROM persons', [], function(islem, sonuc) {
-                           console.log(sonuc.rows);
-                           var len = sonuc.rows.length;
-                           console.log("rows:"+len);
-                          if(len==0){
-                              tx.executeSql('INSERT INTO persons (name,surName,userName,userPassword) VALUES (?,?,?,?)', [_personName, _personSurName,_personUserName,_personPassword], function(islem, sonuc) {
-                                    console.log(sonuc);  
-                                    document.getElementById("personName").value="";
-                                    document.getElementById("personSurName").value="";
-                                    document.getElementById("personUserName").value="";
-                                    document.getElementById("personPassword").value="";
-                                    console.log("isim kaydedildi...");                          
-                                   // KAYITLAR TEKRAR OKUNARAK TABLOYA AKTARILIYOR
-                              }, function(islem, hata) {
-                                     console.log("Hata: ", hata);
-                              });
-                          }
-                          jQuery.each(sonuc.rows, function(index, value) {
-                              if(personUserName==value.userName){
-                                bilgi=true;
-                                return 0;
-                              }
-                          });
-                          if(bilgi && len>1){
-                              alert("Girilen kullanıcı ismi kullanılmakta!");
-                              window.location.reload();
-                              return 0;
-                          }else if(len>=1){
-                              tx.executeSql('INSERT INTO persons (name,surName,userName,userPassword) VALUES (?,?,?,?)', [_personName, _personSurName,_personUserName,_personPassword], function(islem, sonuc) {
-                                console.log(sonuc);
-                                  // INPUT'LAR SIFIRLANIYOR
-                                  document.getElementById("personName").value="";
-                                  document.getElementById("personSurName").value="";
-                                  document.getElementById("personUserName").value="";
-                                  document.getElementById("personPassword").value="";
-                                  console.log("isim kaydedildi... else");
-                                  return 0;                                    
-                                }, function(islem, hata) {
-                                  console.log("Hata: ", hata);
-                                });
-                            }
-                        });
-                    }
-            });
-        }
-    </script>
+      }
+    });
+  }
+</script>
+
 </html>

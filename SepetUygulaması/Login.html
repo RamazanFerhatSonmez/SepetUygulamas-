@@ -1,97 +1,88 @@
 <!DOCTYPE html>
 <html>
-    <head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-      <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" ></script>
-        <link rel="stylesheet" type="text/css" href="Login.css" />
-      <title>login Page</title>
-    </head>
-    <body> 
-    	  <form>
-          <div class = "input-group">
-            <label>GİRİŞ</label>
-            <label>   </label>
-            <label>Kullanıcı Adı</label>
-            <input type="text" id="personUserName" placeholder="Kullanıcı adınızı giriniz...">
-          </div>	 
-          <div class = "input-group">
-            <label>Şifre</label>
-            <input type="password"  id="personPasword" placeholder="Şifrenizi giriniz...">
-          </div>	
-          <div class = "input-group">
-             <button type="button" href="#"id="personLogin" class="btn">Giris</button> 
-             <button type="button" onclick="location.href='SignUp.html' " id="personAdd" class="btn">Uye Ol</button> 
-          </div>	
-        </form>
-    </body>	
-    <script>
-      $(document).ready(function(){
-          var user_Name;
-          var person_Pasword
-          var loginControllerMsg=false;
-          var user_id;
-          var user_Name;
-          var user_Password;
-          if (window.openDatabase) {
-              // VERİTABANINI OLUŞTUR
-              var veritabani = openDatabase('sepetUygulaması', '1.0', 'Web SQL Veritabanı', 10*1024*1024);  
-              console.log("local_veritabani isimli veritabanı 1.0 versiyonu ile 10MB olacak şekilde oluşturuldu veya zaten varsa yeniden oluşturulmadı!");
-              // KAYITLARI ÇEK VE LİSTELE
-              local_Storage() ;
-          }else{
-             alert("Maalesef tarayıcınızda Web SQL desteği bulunmamaktadır.");
-             local_Storage() ;
-          }
-          $(document).on('click', '#personLogin', function() {
-              user_Name=$("#personUserName").val();
-              person_Pasword=$("#personPasword").val();
-              localStorage.setItem("username", user_Name);
-              localStorage.setItem("userPassword", person_Pasword);
-              loginController(user_Name,person_Pasword);
-              $("#personUserName").val("");
-              $("#personPasword").val("");
-              console.log("userName ve password loginController a gönderildi..");
-          });
-          function loginController(userName,personPasword){
-              veritabani.transaction(function(tx) {
-                tx.executeSql('SELECT * FROM persons', [], function(islem, sonuc) {
-                    console.log(sonuc.rows);
-                    jQuery.each(sonuc.rows, function(index, value) {
-                       loginControllerMsg=true;
-                       console.log("loginControllerMsg::"+loginControllerMsg);
-                       if(userName==value.userName && personPasword==value.userPassword){
-                         localStorage.setItem("user_Id", value.id);
-                         window.location.href="homePage.html?"+value.id; 
-                         loginControllerMsg=false;
-                         user_id=value.id;
-                       }
-                    });  
-                  },function(islem, hata) {
-                    console.log("Tabo Yok")
-                    console.log("Hata: ", hata);
-                  });
-              });
-          }
-          function local_Storage(){
-            if(localStorage.getItem("username") !==null){
-               $("#personUserName").val(localStorage.getItem("username"));
-               $("#personPasword").val(localStorage.getItem("userPassword"));
-                alert("Hosgeldin "+localStorage.getItem("username"));
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="Login.css" />
+  <title>login Page</title>
+</head>
+
+<body>
+  <form>
+    <div class="input-group">
+      <label>GİRİŞ</label>
+      <label> </label>
+      <label>Kullanıcı Adı</label>
+      <input type="text" id="personUserName" placeholder="Kullanıcı adınızı giriniz...">
+    </div>
+    <div class="input-group">
+      <label>Şifre</label>
+      <input type="password" id="personPasword" placeholder="Şifrenizi giriniz...">
+    </div>
+    <div class="input-group">
+      <button type="button" href="#" id="personLogin" class="btn">Giris</button>
+      <button type="button" onclick="location.href='SignUp.html' " id="personAdd" class="btn">Uye Ol</button>
+    </div>
+  </form>
+</body>
+<script>
+  $(document).ready(function () {
+    var user_Name;
+    var person_Pasword
+    var loginControllerMsg = false;
+    var user_id;
+    var user_Name;
+    var user_Password;
+    if (window.openDatabase) {
+      // VERİTABANINI OLUŞTUR
+      var veritabani = openDatabase('sepetUygulaması', '1.0', 'Web SQL Veritabanı', 10 * 1024 * 1024);
+      console.log("local_veritabani isimli veritabanı 1.0 versiyonu ile 10MB olacak şekilde oluşturuldu veya zaten varsa yeniden oluşturulmadı!");
+      // KAYITLARI ÇEK VE LİSTELE
+      local_Storage();
+    } else {
+      alert("Maalesef tarayıcınızda Web SQL desteği bulunmamaktadır.");
+      local_Storage();
+    }
+    $(document).on('click', '#personLogin', function () {
+      user_Name = $("#personUserName").val();
+      person_Pasword = $("#personPasword").val();
+      localStorage.setItem("username", user_Name);
+      localStorage.setItem("userPassword", person_Pasword);
+      loginController(user_Name, person_Pasword);
+      $("#personUserName").val("");
+      $("#personPasword").val("");
+      console.log("userName ve password loginController a gönderildi..");
+    });
+    function loginController(userName, personPasword) {
+      veritabani.transaction(function (tx) {
+        tx.executeSql('SELECT * FROM persons', [], function (islem, sonuc) {
+          console.log(sonuc.rows);
+          jQuery.each(sonuc.rows, function (index, value) {
+            loginControllerMsg = true;
+            console.log("loginControllerMsg::" + loginControllerMsg);
+            if (userName == value.userName && personPasword == value.userPassword) {
+              localStorage.setItem("user_Id", value.id);
+              window.location.href = "homePage.html?" + value.id;
+              loginControllerMsg = false;
+              user_id = value.id;
             }
-          }
-          //*********Document Ready sonu**************
+          });
+        }, function (islem, hata) {
+          console.log("Tabo Yok")
+          console.log("Hata: ", hata);
+        });
       });
-    </script>		
+    }
+    function local_Storage() {
+      if (localStorage.getItem("username") !== null) {
+        $("#personUserName").val(localStorage.getItem("username"));
+        $("#personPasword").val(localStorage.getItem("userPassword"));
+        alert("Hosgeldin " + localStorage.getItem("username"));
+      }
+    }
+    //*********Document Ready sonu**************
+  });
+</script>
+
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
